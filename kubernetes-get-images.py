@@ -15,14 +15,17 @@ def get_pods_for_all_namespaces() -> list:
 def get_images_from_pod(pod: V1Pod) -> list:
     return [ container.image for container in pod.spec.containers]
    
-def  add_to_table(pod: V1Pod, images: list, table: list):
+def  add_to_table(pod: V1Pod, images: str, table: list):
     table.append([pod.metadata.name, images])
+
+def list_to_comma_string(images: list) -> str:
+    return ', '.join(images)
 
 TABLE_HEADERS = ["Pod", "Image"]
 def main():
     table = []
     for pod in get_pods_for_all_namespaces():
-        images = get_images_from_pod(pod)
+        images = list_to_comma_string(get_images_from_pod(pod))
         add_to_table(pod, images, table)
     print(tabulate(table, headers=TABLE_HEADERS, tablefmt="simple_grid"))
 
